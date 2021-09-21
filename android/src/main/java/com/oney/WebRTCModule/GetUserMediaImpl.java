@@ -108,8 +108,8 @@ class GetUserMediaImpl {
         AudioSource audioSource = pcFactory.createAudioSource(peerConstraints);
         AudioTrack track = pcFactory.createAudioTrack(id, audioSource);
         tracks.put(
-            id,
-            new TrackPrivate(track, audioSource, /* videoCapturer */ null));
+                id,
+                new TrackPrivate(track, audioSource, /* videoCapturer */ null));
 
         return track;
     }
@@ -177,9 +177,9 @@ class GetUserMediaImpl {
      * the constraints map.
      */
     void getUserMedia(
-        final ReadableMap constraints,
-        final Callback successCallback,
-        final Callback errorCallback) {
+            final ReadableMap constraints,
+            final Callback successCallback,
+            final Callback errorCallback) {
         // TODO: change getUserMedia constraints format to support new syntax
         //   constraint format seems changed, and there is no mandatory any more.
         //   and has a new syntax/attrs to specify resolution
@@ -199,8 +199,8 @@ class GetUserMediaImpl {
             Log.d(TAG, "getUserMedia(video): " + videoConstraintsMap);
 
             CameraCaptureController cameraCaptureController = new CameraCaptureController(
-                cameraEnumerator,
-                videoConstraintsMap);
+                    cameraEnumerator,
+                    videoConstraintsMap);
 
             videoTrack = createVideoTrack(cameraCaptureController);
         }
@@ -264,15 +264,15 @@ class GetUserMediaImpl {
         this.displayMediaPromise = promise;
 
         MediaProjectionManager mediaProjectionManager =
-            (MediaProjectionManager) currentActivity.getApplication().getSystemService(
-                Context.MEDIA_PROJECTION_SERVICE);
+                (MediaProjectionManager) currentActivity.getApplication().getSystemService(
+                        Context.MEDIA_PROJECTION_SERVICE);
 
         if (mediaProjectionManager != null) {
             UiThreadUtil.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     currentActivity.startActivityForResult(
-                        mediaProjectionManager.createScreenCaptureIntent(), PERMISSION_REQUEST_CODE);
+                            mediaProjectionManager.createScreenCaptureIntent(), PERMISSION_REQUEST_CODE);
                 }
             });
 
@@ -356,8 +356,24 @@ class GetUserMediaImpl {
         DisplayMetrics displayMetrics = DisplayUtils.getDisplayMetrics(reactContext.getCurrentActivity());
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
+        /**resolution adjusting by arun */
+        if (width > height) {
+            //landscape mode
+            if (width > 1024) {
+                int ratio = width / height;
+                height = 1024 / ratio;
+                width = 1024;
+            }
+        } else {
+            //portrait mode
+            if (height > 1024) {
+                int ratio = height / width;
+                height = 1024;
+                width = 1024 / ratio;
+            }
+        }
         ScreenCaptureController screenCaptureController
-            = new ScreenCaptureController(reactContext.getCurrentActivity(), width, height, mediaProjectionPermissionResultData);
+                = new ScreenCaptureController(reactContext.getCurrentActivity(), width, height, mediaProjectionPermissionResultData);
         return createVideoTrack(screenCaptureController);
     }
 
@@ -372,7 +388,7 @@ class GetUserMediaImpl {
         PeerConnectionFactory pcFactory = webRTCModule.mFactory;
         EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
         SurfaceTextureHelper surfaceTextureHelper =
-            SurfaceTextureHelper.create("CaptureThread", eglContext);
+                SurfaceTextureHelper.create("CaptureThread", eglContext);
 
         if (surfaceTextureHelper == null) {
             Log.d(TAG, "Error creating SurfaceTextureHelper");
@@ -427,9 +443,9 @@ class GetUserMediaImpl {
          *                               {@code track} is a {@link VideoTrack}
          */
         public TrackPrivate(
-            MediaStreamTrack track,
-            MediaSource mediaSource,
-            AbstractVideoCaptureController videoCaptureController) {
+                MediaStreamTrack track,
+                MediaSource mediaSource,
+                AbstractVideoCaptureController videoCaptureController) {
             this.track = track;
             this.mediaSource = mediaSource;
             this.videoCaptureController = videoCaptureController;

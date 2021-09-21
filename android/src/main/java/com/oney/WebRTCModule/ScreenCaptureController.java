@@ -35,6 +35,23 @@ public class ScreenCaptureController extends AbstractVideoCaptureController {
                     DisplayMetrics displayMetrics = DisplayUtils.getDisplayMetrics((Activity) context);
                     int width = displayMetrics.widthPixels;
                     int height = displayMetrics.heightPixels;
+                    /**resolution adjusting by arun */
+                    if (width > height) {
+                        //landscape mode
+                        if (width > 1024) {
+                            int ratio = width / height;
+                            height = 1024 / ratio;
+                            width = 1024;
+                        }
+                    } else {
+                        //portrait mode
+                        if (height > 1024) {
+                            int ratio = height / width;
+                            height = 1024;
+                            width = 1024 / ratio;
+                        }
+                    }
+
                     videoCapturer.changeCaptureFormat(width, height, DEFAULT_FPS);
                 } catch (Exception ex) {
                     // We ignore exceptions here. The video capturer runs on its own
@@ -51,14 +68,14 @@ public class ScreenCaptureController extends AbstractVideoCaptureController {
     @Override
     protected VideoCapturer createVideoCapturer() {
         VideoCapturer videoCapturer = new ScreenCapturerAndroid(
-            mediaProjectionPermissionResultData,
-            new MediaProjection.Callback() {
-                @Override
-                public void onStop() {
-                    Log.w(TAG, "Media projection stopped.");
-                    orientatationListener.disable();
-                }
-            });
+                mediaProjectionPermissionResultData,
+                new MediaProjection.Callback() {
+                    @Override
+                    public void onStop() {
+                        Log.w(TAG, "Media projection stopped.");
+                        orientatationListener.disable();
+                    }
+                });
 
 
         return videoCapturer;
