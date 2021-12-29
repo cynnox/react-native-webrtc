@@ -1,21 +1,15 @@
-'use strict';
 
-import {NativeModules} from 'react-native';
-import EventTarget from 'event-target-shim';
+import { NativeModules } from 'react-native';
+import { defineCustomEventTarget } from 'event-target-shim';
 
 import getDisplayMedia from './getDisplayMedia';
 import getUserMedia from './getUserMedia';
 
-const {WebRTCModule} = NativeModules;
+const { WebRTCModule } = NativeModules;
 
-const MEDIA_DEVICES_EVENTS = [
-    'devicechange'
-];
+const MEDIA_DEVICES_EVENTS = ['devicechange'];
 
-class MediaDevices extends EventTarget(MEDIA_DEVICES_EVENTS) {
-    // TODO: implement.
-    ondevicechange: ?Function;
-
+class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
     /**
      * W3C "Media Capture and Streams" compatible {@code enumerateDevices}
      * implementation.
@@ -40,7 +34,7 @@ class MediaDevices extends EventTarget(MEDIA_DEVICES_EVENTS) {
      * implementation.
      * See: https://www.w3.org/TR/mediacapture-streams/#dom-mediadevices-enumeratedevices
      *
-     * @param {*} constraints 
+     * @param {*} constraints
      * @returns {Promise}
      */
     getUserMedia(constraints) {
