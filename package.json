@@ -27,8 +27,7 @@
     "react-native": ">=0.60.0"
   },
   "scripts": {
-    "postinstall": "node tools/downloadWebRTC.js",
-    "prepare": "husky install"
+    "postinstall": "node tools/downloadWebRTC.js"
   },
   "bugs": {
     "url": "https://github.com/react-native-webrtc/react-native-webrtc/issues"
