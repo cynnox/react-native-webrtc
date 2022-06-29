@@ -6,10 +6,22 @@
 
 @interface VideoCaptureController ()
 
-@dynamic facingMode;
+@property (nonatomic, strong) RTCCameraVideoCapturer *capturer;
+@property (nonatomic, strong) AVCaptureDeviceFormat *selectedFormat;
+@property (nonatomic, strong) AVCaptureDevice *device;
+@property (nonatomic, copy) NSString *deviceId;
+@property (nonatomic, assign) BOOL running;
+@property (nonatomic, assign) BOOL usingFrontCamera;
+@property (nonatomic, assign) int width;
+@property (nonatomic, assign) int height;
+@property (nonatomic, assign) int frameRate;
 
--(instancetype)initWithCapturer:(RTCCameraVideoCapturer *)capturer
-                 andConstraints:(NSDictionary *)constraints {
+@end
+
+@implementation VideoCaptureController
+
+- (instancetype)initWithCapturer:(RTCCameraVideoCapturer *)capturer
+                  andConstraints:(NSDictionary *)constraints {
     self = [super init];
     if (self) {
         self.capturer = capturer;
@@ -206,10 +218,34 @@
     return selectedFormat;
 }
 
-#pragma mark Properties
+- (void)throttleFrameRateForDevice:(AVCaptureDevice *)device {
+    NSError *error = nil;
 
-- (NSString *)facingMode {
-    return _usingFrontCamera ? @"user" : @"environment";
+    [device lockForConfiguration:&error];
+    if (error) {
+        RCTLog(@"[VideoCaptureController] Could not lock device for configuration: %@", error);
+        return;
+    }
+
+    device.activeVideoMinFrameDuration = CMTimeMake(1, 20);
+    device.activeVideoMaxFrameDuration = CMTimeMake(1, 15);
+
+    [device unlockForConfiguration];
+}
+
+- (void)resetFrameRateForDevice:(AVCaptureDevice *)device {
+    NSError *error = nil;
+
+    [device lockForConfiguration:&error];
+    if (error) {
+        RCTLog(@"[VideoCaptureController] Could not lock device for configuration: %@", error);
+        return;
+    }
+
+    device.activeVideoMinFrameDuration = kCMTimeInvalid;
+    device.activeVideoMaxFrameDuration = kCMTimeInvalid;
+
+    [device unlockForConfiguration];
 }
 
 @end

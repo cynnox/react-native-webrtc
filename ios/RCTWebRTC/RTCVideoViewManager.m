@@ -259,7 +259,7 @@ typedef NS_ENUM(NSInteger, RTCVideoViewObjectFit) {
 - (void)setMirror:(BOOL)mirror {
   if (_mirror != mirror) {
       _mirror = mirror;
-      
+
       #if !TARGET_OS_OSX
             [self setNeedsLayout];
       #else
@@ -278,7 +278,7 @@ typedef NS_ENUM(NSInteger, RTCVideoViewObjectFit) {
 - (void)setObjectFit:(RTCVideoViewObjectFit)objectFit {
   if (_objectFit != objectFit) {
       _objectFit = objectFit;
-      
+
       #if !TARGET_OS_OSX
             [self setNeedsLayout];
       #else
@@ -304,7 +304,7 @@ typedef NS_ENUM(NSInteger, RTCVideoViewObjectFit) {
       });
       _videoSize.height = 0;
       _videoSize.width = 0;
-      
+
       #if !TARGET_OS_OSX
             [self setNeedsLayout];
       #else
@@ -343,7 +343,7 @@ typedef NS_ENUM(NSInteger, RTCVideoViewObjectFit) {
 - (void)videoView:(id<RTCVideoRenderer>)videoView didChangeVideoSize:(CGSize)size {
   if (videoView == self.videoView) {
     _videoSize = size;
-    
+
     #if !TARGET_OS_OSX
           [self setNeedsLayout];
     #else

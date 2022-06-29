@@ -1,7 +1,8 @@
 #import <objc/runtime.h>
 
-#import "RCTBridge.h"
-#import "RCTEventDispatcher.h"
+#import <React/RCTBridge.h>
+#import <React/RCTBridgeModule.h>
+#import <React/RCTEventDispatcher.h>
 
 #import "WebRTCModule+RTCDataChannel.h"
 #import "WebRTCModule+RTCPeerConnection.h"
@@ -146,14 +147,6 @@ RCT_EXPORT_METHOD(dataChannelSend:(nonnull NSNumber *)peerConnectionId
                           // scenario is extremely simple.
                           @"data": (data ? data : [NSNull null])};
   [self sendEventWithName:kEventDataChannelReceiveMessage body:event];
-}
-
-- (void)dataChannel:(DataChannelWrapper *)dcw didChangeBufferedAmount:(uint64_t)amount
-{
-    NSDictionary *event = @{@"reactTag": dcw.reactTag,
-                            @"peerConnectionId": dcw.pcId,
-                            @"bufferedAmount": [NSNumber numberWithUnsignedLongLong:amount]};
-    [self sendEventWithName:kEventDataChannelDidChangeBufferedAmount body:event];
 }
 
 @end

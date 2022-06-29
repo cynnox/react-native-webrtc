@@ -136,26 +136,22 @@ RCT_EXPORT_METHOD(getUserMedia:(NSDictionary *)constraints
     = [self.peerConnectionFactory mediaStreamWithStreamId:mediaStreamId];
   NSMutableArray *tracks = [NSMutableArray array];
   NSMutableArray *tmp = [NSMutableArray array];
-  NSMutableDictionary *settings = [NSMutableDictionary new];
   if (audioTrack)
       [tmp addObject:audioTrack];
   if (videoTrack)
       [tmp addObject:videoTrack];
+
   for (RTCMediaStreamTrack *track in tmp) {
     if ([track.kind isEqualToString:@"audio"]) {
       [mediaStream addAudioTrack:(RTCAudioTrack *)track];
     } else if([track.kind isEqualToString:@"video"]) {
       [mediaStream addVideoTrack:(RTCVideoTrack *)track];
-      settings[@"height"] = @(videoTrack.videoCaptureController.height);
-      settings[@"width"] = @(videoTrack.videoCaptureController.width);
-      settings[@"fps"] = @(videoTrack.videoCaptureController.fps);
-      settings[@"facingMode"] = videoTrack.videoCaptureController.facingMode;
     }
 
     NSString *trackId = track.trackId;
 
     self.localTracks[trackId] = track;
-    
+
     NSDictionary *settings = @{};
     if ([track.kind isEqualToString:@"video"]) {
         RTCVideoTrack *videoTrack = (RTCVideoTrack *)track;
