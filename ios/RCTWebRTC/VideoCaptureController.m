@@ -6,22 +6,10 @@
 
 @interface VideoCaptureController ()
 
-@property (nonatomic, strong) RTCCameraVideoCapturer *capturer;
-@property (nonatomic, strong) AVCaptureDeviceFormat *selectedFormat;
-@property (nonatomic, strong) AVCaptureDevice *device;
-@property (nonatomic, copy) NSString *deviceId;
-@property (nonatomic, assign) BOOL running;
-@property (nonatomic, assign) BOOL usingFrontCamera;
-@property (nonatomic, assign) int width;
-@property (nonatomic, assign) int height;
-@property (nonatomic, assign) int frameRate;
+@dynamic facingMode;
 
-@end
-
-@implementation VideoCaptureController
-
-- (instancetype)initWithCapturer:(RTCCameraVideoCapturer *)capturer
-                  andConstraints:(NSDictionary *)constraints {
+-(instancetype)initWithCapturer:(RTCCameraVideoCapturer *)capturer
+                 andConstraints:(NSDictionary *)constraints {
     self = [super init];
     if (self) {
         self.capturer = capturer;
@@ -77,7 +65,7 @@
 
         return;
     }
-        
+
     AVCaptureDeviceFormat *format
         = [self selectFormatForDevice:self.device
                       withTargetWidth:self.width
@@ -87,14 +75,14 @@
 
         return;
     }
-    
+
     self.selectedFormat = format;
 
     RCTLog(@"[VideoCaptureController] Capture will start");
 
     // Starting the capture happens on another thread. Wait for it.
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
+
     __weak VideoCaptureController *weakSelf = self;
     [self.capturer startCaptureWithDevice:self.device format:format fps:self.frameRate completionHandler:^(NSError *err) {
         if (err) {
@@ -122,7 +110,7 @@
         RCTLog(@"[VideoCaptureController] Capture stopped");
         weakSelf.running = NO;
         weakSelf.device = nil;
-        
+
         dispatch_semaphore_signal(semaphore);
     }];
 
@@ -180,7 +168,7 @@
     if (device) {
         [self registerSystemPressureStateObserverForDevice:device];
     }
-    
+
     _device = device;
 }
 
@@ -218,34 +206,10 @@
     return selectedFormat;
 }
 
-- (void)throttleFrameRateForDevice:(AVCaptureDevice *)device {
-    NSError *error = nil;
-    
-    [device lockForConfiguration:&error];
-    if (error) {
-        RCTLog(@"[VideoCaptureController] Could not lock device for configuration: %@", error);
-        return;
-    }
-    
-    device.activeVideoMinFrameDuration = CMTimeMake(1, 20);
-    device.activeVideoMaxFrameDuration = CMTimeMake(1, 15);
-    
-    [device unlockForConfiguration];
-}
+#pragma mark Properties
 
-- (void)resetFrameRateForDevice:(AVCaptureDevice *)device {
-    NSError *error = nil;
-    
-    [device lockForConfiguration:&error];
-    if (error) {
-        RCTLog(@"[VideoCaptureController] Could not lock device for configuration: %@", error);
-        return;
-    }
-    
-    device.activeVideoMinFrameDuration = kCMTimeInvalid;
-    device.activeVideoMaxFrameDuration = kCMTimeInvalid;
-    
-    [device unlockForConfiguration];
+- (NSString *)facingMode {
+    return _usingFrontCamera ? @"user" : @"environment";
 }
 
 @end

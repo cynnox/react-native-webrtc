@@ -9,6 +9,11 @@
 @property (nonatomic, readonly, strong) AVCaptureDeviceFormat *selectedFormat;
 @property (nonatomic, readonly, assign) int frameRate;
 
+@property(nonatomic, readonly) int height;
+@property(nonatomic, readonly) int width;
+@property(nonatomic, readonly) int fps;
+@property(nonatomic, copy, readonly) NSString *facingMode;
+
 -(instancetype)initWithCapturer:(RTCCameraVideoCapturer *)capturer
                  andConstraints:(NSDictionary *)constraints;
 -(void)startCapture;
