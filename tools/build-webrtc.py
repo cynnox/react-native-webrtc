@@ -47,7 +47,6 @@ GN_COMMON_ARGS = [
 
 _GN_APPLE_COMMON = [
     'enable_dsyms=false',
-    'enable_stripping=true',
     'rtc_enable_symbol_export=false',
     'rtc_enable_objc_symbol_export=true',
     'rtc_include_tests=false'
@@ -58,7 +57,6 @@ _GN_IOS_ARGS = [
     'ios_deployment_target="12.0"',
     'ios_enable_code_signing=false',
     'use_lld=false',
-    'use_custom_libcxx=false',
     'target_os="ios"',
     'target_environment="%s"'
 ]
