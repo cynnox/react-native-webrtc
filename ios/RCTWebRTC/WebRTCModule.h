@@ -8,8 +8,9 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-#import "RCTBridgeModule.h"
-#import "RCTConvert.h"
+#import <React/RCTBridgeModule.h>
+#import <React/RCTConvert.h>
+#import <React/RCTEventEmitter.h>
 
 #import <WebRTC/RTCMediaStream.h>
 #import <WebRTC/RTCPeerConnectionFactory.h>
