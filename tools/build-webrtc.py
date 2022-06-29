@@ -37,12 +37,18 @@ def build_gn_args(platform_args):
 GN_COMMON_ARGS = [
     'is_component_build=false',
     'rtc_libvpx_build_vp9=true',
+    'rtc_build_dcsctp=true',
+    'rtc_build_usrsctp=false',
+    'rtc_enable_protobuf=false',
+    'rtc_include_tests=false',
     'is_debug=%s',
     'target_cpu="%s"'
 ]
 
 _GN_APPLE_COMMON = [
-    'enable_dsyms=true',
+    'enable_dsyms=false',
+    'enable_stripping=true',
+    'rtc_enable_symbol_export=false',
     'rtc_enable_objc_symbol_export=true',
     'rtc_include_tests=false'
 ]
@@ -51,15 +57,15 @@ _GN_IOS_ARGS = [
     'enable_ios_bitcode=true',
     'ios_deployment_target="12.0"',
     'ios_enable_code_signing=false',
+    'use_lld=false',
+    'use_custom_libcxx=false',
     'target_os="ios"',
-    'use_xcode_clang=true',
     'target_environment="%s"'
 ]
 GN_IOS_ARGS = build_gn_args(_GN_APPLE_COMMON + _GN_IOS_ARGS)
 
 _GN_MACOS_ARGS = [
-    'target_os="mac"',
-    'use_xcode_clang=false'
+    'target_os="mac"'
 ]
 GN_MACOS_ARGS = build_gn_args(_GN_APPLE_COMMON + _GN_MACOS_ARGS)
 
@@ -188,11 +194,11 @@ def build(target_dir, platform, debug):
             gn_args = GN_IOS_ARGS % (str(debug).lower(), arch, tenv)
             gn_cmd = 'gn gen %s %s' % (gn_out_dir, gn_args)
             sh(gn_cmd, env)
-        for arch in MACOS_BUILD_ARCHS:
-            gn_out_dir = 'out/%s-macos-%s' % (build_type, arch)
-            gn_args = GN_MACOS_ARGS % (str(debug).lower(), arch)
-            gn_cmd = 'gn gen %s %s' % (gn_out_dir, gn_args)
-            sh(gn_cmd, env)
+        #for arch in MACOS_BUILD_ARCHS:
+        #    gn_out_dir = 'out/%s-macos-%s' % (build_type, arch)
+        #    gn_args = GN_MACOS_ARGS % (str(debug).lower(), arch)
+        #    gn_cmd = 'gn gen %s %s' % (gn_out_dir, gn_args)
+        #    sh(gn_cmd, env)
     else:
         for cpu in ANDROID_BUILD_CPUS:
             gn_out_dir = 'out/%s-%s' % (build_type, cpu)
@@ -207,10 +213,10 @@ def build(target_dir, platform, debug):
             gn_out_dir = 'out/%s-ios-%s-%s' % (build_type, tenv, arch)
             ninja_cmd = 'ninja -C %s framework_objc' % gn_out_dir
             sh(ninja_cmd, env)
-        for arch in MACOS_BUILD_ARCHS:
-            gn_out_dir = 'out/%s-macos-%s' % (build_type, arch)
-            ninja_cmd = 'ninja -C %s mac_framework_objc' % gn_out_dir
-            sh(ninja_cmd, env)
+        #for arch in MACOS_BUILD_ARCHS:
+        #    gn_out_dir = 'out/%s-macos-%s' % (build_type, arch)
+        #    ninja_cmd = 'ninja -C %s mac_framework_objc' % gn_out_dir
+        #    sh(ninja_cmd, env)
     else:
         for cpu in ANDROID_BUILD_CPUS:
             gn_out_dir = 'out/%s-%s' % (build_type, cpu)
@@ -252,9 +258,9 @@ def build(target_dir, platform, debug):
             tenv, arch = item.split(':')
             gn_out_dir = 'out/%s-ios-%s-%s' % (build_type, tenv, arch)
             xcodebuild_cmd += ' -framework %s' % os.path.join(gn_out_dir, 'WebRTC.framework')
-        for arch in MACOS_BUILD_ARCHS:
-            gn_out_dir = 'out/%s-macos-%s' % (build_type, arch)
-            xcodebuild_cmd += ' -framework %s' % os.path.join(gn_out_dir, 'WebRTC.framework')
+        #for arch in MACOS_BUILD_ARCHS:
+        #    gn_out_dir = 'out/%s-macos-%s' % (build_type, arch)
+        #    xcodebuild_cmd += ' -framework %s' % os.path.join(gn_out_dir, 'WebRTC.framework')
         sh(xcodebuild_cmd)
         sh('tar zcf WebRTC.xcframework-bitcode.tgz WebRTC.xcframework', cwd=build_dir)
         rmr(xcframework_path)
@@ -268,9 +274,9 @@ def build(target_dir, platform, debug):
             xcodebuild_cmd += ' -framework %s' % os.path.join(gn_out_dir, 'WebRTC.framework')
             framework_path = os.path.join(gn_out_dir, 'WebRTC.framework', 'WebRTC')
             sh(bitcode_strip_cmd % (framework_path, framework_path))
-        for arch in MACOS_BUILD_ARCHS:
-            gn_out_dir = 'out/%s-macos-%s' % (build_type, arch)
-            xcodebuild_cmd += ' -framework %s' % os.path.join(gn_out_dir, 'WebRTC.framework')
+        #for arch in MACOS_BUILD_ARCHS:
+        #    gn_out_dir = 'out/%s-macos-%s' % (build_type, arch)
+        #    xcodebuild_cmd += ' -framework %s' % os.path.join(gn_out_dir, 'WebRTC.framework')
         sh(xcodebuild_cmd)
         sh('tar zcf WebRTC.xcframework.tgz WebRTC.xcframework', cwd=build_dir)
         rmr(xcframework_path)

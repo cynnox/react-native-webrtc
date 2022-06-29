@@ -444,6 +444,8 @@ RCT_EXPORT_METHOD(peerConnectionRestartIce:(nonnull NSNumber *)objectID)
             NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
             [s appendString:jsonString];
         }
+    } else if ([statisticsValue isKindOfClass:[NSNumber class]]) {
+        [s appendString:[NSString stringWithFormat:@"%@", statisticsValue]];
     } else {
         [s appendString:@"\""];
         [s appendString:[NSString stringWithFormat:@"%@", statisticsValue]];
@@ -513,7 +515,7 @@ RCT_EXPORT_METHOD(peerConnectionRestartIce:(nonnull NSNumber *)objectID)
   NSMutableArray *tracks = [NSMutableArray array];
   for (RTCVideoTrack *track in stream.videoTracks) {
     peerConnection.remoteTracks[track.trackId] = track;
-    [peerConnection addVideoTrackAdapter:streamReactTag track:track];
+    [peerConnection addVideoTrackAdapter:track];
     [tracks addObject:@{@"id": track.trackId, @"kind": track.kind, @"label": track.trackId, @"enabled": @(track.isEnabled), @"remote": @(YES), @"readyState": @"live"}];
   }
   for (RTCAudioTrack *track in stream.audioTracks) {

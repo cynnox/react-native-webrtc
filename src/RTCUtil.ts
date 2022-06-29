@@ -113,6 +113,27 @@ function normalizeMediaConstraints(constraints, mediaType) {
 }
 
 /**
+ * Utility for creating short random strings from float point values.
+ * We take 4 characters from the end after converting to a string.
+ * Conversion to string gives us some letters as we don't want just numbers.
+ * Should be suitable to pass for enough randomness.
+ *
+ * @return {String} 4 random characters
+ */
+function chr4() {
+    return Math.random().toString(16).slice(-4);
+}
+
+/**
+ * Put together a random string in UUIDv4 format {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}
+ *
+ * @return {String} uuidv4
+ */
+export function uniqueID() {
+    return `${chr4()}${chr4()}-${chr4()}-${chr4()}-${chr4()}-${chr4()}${chr4()}${chr4()}`;
+}
+
+/**
  * Utility for deep cloning an object. Object.assign() only does a shallow copy.
  *
  * @param {Object} obj - object to be cloned
@@ -122,13 +143,17 @@ export function deepClone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+interface Constraints {
+    mandatory?: object;
+}
+
 /**
  * Normalize options passed to createOffer() / createAnswer().
  *
  * @param {Object} options - user supplied options
  * @return {Object} newOptions - normalized options
  */
-export function normalizeOfferAnswerOptions(options = {}) {
+export function normalizeOfferAnswerOptions(options: Constraints = {}) {
     const newOptions = {};
 
     if (!options) {
