@@ -1,6 +1,6 @@
 {
   "name": "react-native-webrtc",
-  "version": "1.94.1",
+  "version": "0.54.6",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/react-native-webrtc/react-native-webrtc.git"

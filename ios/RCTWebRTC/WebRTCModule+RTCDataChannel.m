@@ -1,8 +1,7 @@
 #import <objc/runtime.h>
 
-#import <React/RCTBridge.h>
-#import <React/RCTBridgeModule.h>
-#import <React/RCTEventDispatcher.h>
+#import "RCTBridge.h"
+#import "RCTEventDispatcher.h"
 
 #import "WebRTCModule+RTCDataChannel.h"
 #import "WebRTCModule+RTCPeerConnection.h"
@@ -23,7 +22,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(createDataChannel:(nonnull NSNumber *)pee
 
     dispatch_sync(self.workerQueue, ^{
         RTCPeerConnection *peerConnection = self.peerConnections[peerConnectionId];
-        
+
         if (peerConnection == nil) {
             RCTLogWarn(@"PeerConnection %@ not found", peerConnectionId);
             channelInfo = nil;
@@ -31,12 +30,12 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(createDataChannel:(nonnull NSNumber *)pee
         }
 
         RTCDataChannel *dataChannel = [peerConnection dataChannelForLabel:label configuration:config];
-        
+
         if (dataChannel == nil) {
             channelInfo = nil;
             return;
         }
-        
+
         NSString *reactTag = [[NSUUID UUID] UUIDString];
         DataChannelWrapper *dcw = [[DataChannelWrapper alloc] initWithChannel:dataChannel reactTag:reactTag];
         dcw.pcId = peerConnectionId;
