@@ -44,59 +44,7 @@ export default class RTCDataChannel extends defineCustomEventTarget(...DATA_CHAN
         this._negotiated = Boolean(info.negotiated);
         this._readyState = info.readyState;
 
-    this._bufferedAmount = 0;
-    this._label = info.label;
-    this._id = info.id === -1 ? null : info.id; // null until negotiated.
-    this._ordered = Boolean(info.ordered);
-    this._maxPacketLifeTime = info.maxPacketLifeTime;
-    this._maxRetransmits = info.maxRetransmits;
-    this._protocol = info.protocol || '';
-    this._negotiated = Boolean(info.negotiated);
-    this._readyState = info.readyState;
-
-    this._registerEvents();
-  }
-
-  get bufferedAmount(): number {
-    return this._bufferedAmount;
-  }
-
-  get label(): string {
-    return this._label;
-  }
-
-  get id(): number {
-    return this._id;
-  }
-
-  get ordered(): boolean {
-    return this._ordered;
-  }
-
-  get maxPacketLifeTime(): number {
-    return this._maxPacketLifeTime;
-  }
-
-  get maxRetransmits(): number {
-    return this._maxRetransmits;
-  }
-
-  get protocol(): string {
-    return this._protocol;
-  }
-
-  get negotiated(): boolean {
-    return this._negotiated;
-  }
-
-  get readyState(): string {
-    return this._readyState;
-  }
-
-  send(data: string | ArrayBuffer | ArrayBufferView) {
-    if (typeof data === 'string') {
-      WebRTCModule.dataChannelSend(this._peerConnectionId, this._reactTag, data, 'text');
-      return;
+        this._registerEvents();
     }
 
     get label(): string {
